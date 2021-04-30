@@ -88,6 +88,7 @@ def update_skills_db(user_id, test_id, executed_timestamp, topic, mean_value):
     skills_collection = mydb["skills"]
     myquery = {"user_id": str(user_id)}
     skills_obj = list(skills_collection.find(myquery))
+
     if skills_obj:
         skills_obj = skills_obj[0]
         skills = skills_obj.get("skills")
@@ -116,6 +117,21 @@ def update_skills_db(user_id, test_id, executed_timestamp, topic, mean_value):
                 }
             }
             skills_collection.update_one(myquery, newvalues)
+    else:
+        skills_obj = {
+            "user_id": str(user_id),
+            "skills": {
+                topic: [
+                    {
+                        "test_id": test_id,
+                        "skill_level": mean_value,
+                        "executed_timestamp": executed_timestamp
+                    }
+                ]
+            }
+        }
+        skills_collection.insert_one(skills_obj)
+
 
 def helper_function(user_obj, test_id):
     res = []
