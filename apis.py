@@ -12,7 +12,7 @@ app.config['SECRET_KEY'] = 'supersecretkey'
 def prediction_code():
     data = pd.read_csv('updated_data.csv')
     model = Model(seed=42, num_fits=6)
-    data['skill_name'] = data['topic']
+    data['skill_name'] = data['subCategory']
     model.fit(data=data)
     return model
 
@@ -38,17 +38,17 @@ def skill_level_prediction():
         executedDateTime = data.get("executedDateTime")
 
         if interactions:
-            topic = interactions[0].get("categories", {}).get("topic")
+            sub_cat = interactions[0].get("categories", {}).get("subCategory")
             user_obj = list(test_collection.find({
                 "userId": ObjectId(str(user_id)),
                 "interactions": {
                     "$elemMatch": {
-                        "categories.topic": topic
+                        "categories.subCategory": sub_cat
                     }
                 }
             }))
             mean_value = helper_function(user_obj, test_id)
-            update_skills_db(user_id, test_id, executedDateTime, topic, mean_value)
+            update_skills_db(user_id, test_id, executedDateTime, sub_cat, mean_value)
         return jsonify({
             "result": True
         }), 201
@@ -132,7 +132,7 @@ def helper_function(user_obj, test_id):
             hm["user_id"] = user_id
             hm["test_id"] = test_id
             hm["executed_timestamp"] = executedDateTime
-            hm["skill_name"] = test.get("categories", {}).get("topic")
+            hm["skill_name"] = test.get("categories", {}).get("subCategory")
             hm["correct"] = 1 if test.get("correct", {}) else 0
             hm["categories"] = test.get("categories", {}).get("category")
             res.append(hm)
