@@ -40,7 +40,7 @@ def skill_level_prediction():
         if interactions:
             sub_cat = interactions[0].get("categories", {}).get("subCategory")
             user_obj = list(test_collection.find({
-                "userId": ObjectId(str(user_id)),
+                "userId": str(user_id),
                 "interactions": {
                     "$elemMatch": {
                         "categories.subCategory": sub_cat
@@ -86,7 +86,7 @@ def get_skill_level():
 
 def update_skills_db(user_id, test_id, executed_timestamp, topic, mean_value):
     skills_collection = mydb["skills"]
-    myquery = {"user_id": str(ObjectId(user_id))}
+    myquery = {"user_id": str(user_id)}
     skills_obj = list(skills_collection.find(myquery))
     if skills_obj:
         skills_obj = skills_obj[0]
