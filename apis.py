@@ -71,8 +71,13 @@ def get_skill_level():
         skills = skills_obj.get("skills")
 
         for k, v in skills.items():
-            sorted_value = sorted(v, key=lambda x: [x.get("executed_timestamp")])
-            skills[k] = sorted_value
+            sorted_value = sorted(v, key=lambda x: [str(x.get("executed_timestamp"))])
+            temp = []
+            for i in sorted_value:
+                if isinstance(i.get("skill_level"), str):
+                    i["skill_level"] = float(i.get("skill_level"))
+                temp.append(i)
+            skills[k] = temp
         return jsonify({
             "result": True,
             "data": skills
